@@ -1,0 +1,41 @@
+name: two-jobs 
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run a one-line script
+        run: echo "artifact 1" > artifact1.txt
+
+      - name: Archive an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifact1
+          path: artifact1.txt
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
+
+      - name: download the artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact1
+
+      - name: show the artifact
+        run: cat artifact1.txt
+
