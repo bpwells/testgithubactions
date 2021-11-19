@@ -19,13 +19,40 @@ jobs:
           name: artifact1
           path: artifact1.txt
 
-  deploy:
+  deployDev:
+    name: Deploy to Dev
+    if: github.event_name == 'pull_request' 
     needs: build
     runs-on: ubuntu-latest
 
     environment:
          name: development
-         url: 'what.is.this.com'
+         url: 'dev.com'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
+
+      - name: download the artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact1
+
+      - name: show the artifact
+        run: cat artifact1.txt
+
+
+  deployProd:
+    needs: deployDev
+    runs-on: ubuntu-latest
+
+    environment:
+         name: production
+         url: 'prod.com'
 
     steps:
       - uses: actions/checkout@v2
